@@ -22,6 +22,14 @@ CREATE TABLE TblDetalleFactura (
     Detalle_Precio DECIMAL(18, 2)
 );
 
+CREATE TABLE CatUsuario (
+    UsuarioId INT PRIMARY KEY IDENTITY,
+    UsuarioUsername VARCHAR(20) NOT NULL,
+    UsuarioPassword VARCHAR(60) NOT NULL,
+    UsuarioRol VARCHAR(30) NOT NULL
+    UsuarioSalt VARBINARY(64);
+);
+
 Select * From CatMateria
 Select * From TblFactura
 Select * From TblDetalleFactura
