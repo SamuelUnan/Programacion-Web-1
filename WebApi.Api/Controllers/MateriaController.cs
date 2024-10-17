@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using WebApi.Entities;
 using WebApi.Interface;
 using WebApi.Model;
 
@@ -17,49 +18,110 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<MateriaEntities>> GetAll()
+        public IActionResult GetAll()
         {
-            var materias = _IMateriaService.GetALL();
-            if (materias == null)
-            {
-                return NotFound();
-            }
-            return Ok(materias);
+            ResponseEntities<List<MateriaEntities>> _Response = new ResponseEntities<List<MateriaEntities>>();
 
+            try
+            {
+                _Response.StatusCode = "00";
+                _Response.Message = "Success";
+                _Response.Result = _IMateriaService.GetAll();
+                return Ok(_Response);
+            }
+            catch (Exception ex)
+            {
+                _Response.StatusCode = "05";
+                _Response.Message = ex.Message;
+                return NotFound(_Response);
+            }
         }
 
         [HttpGet("{id}")]
-        public ActionResult<MateriaEntities> GetByID(int id)
+        public async Task<IActionResult> GetByID(int id)
         {
-            var materia = _IMateriaService.GetByID(id);
-            if (materia == null) return NotFound();
-            return Ok(materia);
+            ResponseEntities<MateriaEntities> _Response = new ResponseEntities<MateriaEntities>();
+
+            try
+            {
+                _Response.StatusCode = "00";
+                _Response.Message = "Success";
+                _Response.Result = await _IMateriaService.GetById(id);
+
+                return Ok(_Response);
+
+            }
+            catch (Exception ex)
+            {
+                _Response.StatusCode = "05";
+                _Response.Message = ex.Message;
+                return NotFound(_Response);
+            }
         }
 
         [HttpPost]
-        public ActionResult Add(MateriaEntities materia)
+        public async Task<IActionResult> Add(MateriaEntities materia)
         {
-            _IMateriaService.Add(materia);
-            return Ok();
+            ResponseEntities<MateriaEntities> _Response = new ResponseEntities<MateriaEntities>();
+            try
+            {
+                _Response.StatusCode = "00";
+                _Response.Message = "Success";
+                _Response.Result = await _IMateriaService.Add(materia);
+
+                return Ok(_Response);
+
+            }
+            catch (Exception ex)
+            {
+                _Response.StatusCode = "05";
+                _Response.Message = ex.Message;
+                return NotFound(_Response);
+            }
         }
 
         [HttpPut("{id}")]
-        public ActionResult Update(int id, MateriaEntities materia)
+        public async Task<IActionResult> Update(MateriaEntities materia)
         {
-            var find = _IMateriaService.GetByID(id);
-            if (find == null) return NotFound();
-            materia.Id = id;
-            _IMateriaService.Update(materia);
-            return Ok();
+            ResponseEntities<MateriaEntities> _Response = new ResponseEntities<MateriaEntities>();
+
+            try
+            {
+                _Response.StatusCode = "00";
+                _Response.Message = "Success";
+                _Response.Result = await _IMateriaService.Update(materia);
+
+                return Ok(_Response);
+
+            }
+            catch (Exception ex)
+            {
+                _Response.StatusCode = "05";
+                _Response.Message = ex.Message;
+                return NotFound(_Response);
+            }
         }
 
         [HttpDelete("{id}")]
-        public ActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var find = _IMateriaService.GetByID(id);
-            if (find == null) return NotFound();
-            _IMateriaService.Delete(id);
-            return Ok();
+            ResponseEntities<int> _Response = new ResponseEntities<int>();
+
+            try
+            {
+                _Response.StatusCode = "00";
+                _Response.Message = "Success";
+                _Response.Result = await _IMateriaService.Delete(id);
+
+                return Ok(_Response);
+
+            }
+            catch (Exception ex)
+            {
+                _Response.StatusCode = "05";
+                _Response.Message = ex.Message;
+                return NotFound(_Response);
+            }
         }
     }
 }

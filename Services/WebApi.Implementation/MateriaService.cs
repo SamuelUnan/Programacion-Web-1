@@ -1,4 +1,4 @@
-﻿using System.Data.SqlClient;
+using System.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using WebApi.Interface;
 using WebApi.Model;
@@ -14,33 +14,34 @@ public class MateriaService : IMateriaService
         _configuration = configuration;
         connectionString = _configuration.GetConnectionString("DatabaseConnection");
     }
-    public MateriaEntities Add(MateriaEntities materia)
+
+    public async Task<MateriaEntities> Add(MateriaEntities materia)
     {
         using (var connection = new SqlConnection(connectionString))
         {
             var command = new SqlCommand("INSERT INTO CatMateria (Materia_Nombre) VALUES (@Name)", connection);
             command.Parameters.AddWithValue("@Name", materia.Name);
-            connection.Open();
-            command.ExecuteNonQuery();
+            await connection.OpenAsync();
+            await command.ExecuteReaderAsync();
         }
         return materia;
     }
 
-    public void Delete(int id)
+    public async Task<int> Delete(int id)
     {
         using (var connection = new SqlConnection(connectionString))
         {
             var command = new SqlCommand("DELETE FROM CatMateria WHERE Materia_Id = @Id", connection);
             command.Parameters.AddWithValue("@Id", id);
 
-            connection.Open();
-            command.ExecuteNonQuery();
+            await connection.OpenAsync();
+            return await command.ExecuteNonQueryAsync();
         }
     }
 
-    public IEnumerable<MateriaEntities> GetALL()
+    public List<MateriaEntities> GetAll()
     {
-        var materias = new List<MateriaEntities>();
+        List<MateriaEntities> Materias = new List<MateriaEntities>();
         using (var connection = new SqlConnection(connectionString))
         {
             var command = new SqlCommand("Select * From CatMateria", connection);
@@ -49,7 +50,7 @@ public class MateriaService : IMateriaService
             {
                 while (reader.Read())
                 {
-                    materias.Add(new MateriaEntities
+                    Materias.Add(new MateriaEntities
                     {
                         Id = (int)reader["Materia_Id"],
                         Name = reader["Materia_Nombre"].ToString(),
@@ -58,10 +59,10 @@ public class MateriaService : IMateriaService
                 }
             }
         }
-        return materias;
+        return Materias;
     }
 
-    public MateriaEntities GetByID(int id)
+    public async Task<MateriaEntities> GetById(int id)
     {
         using (var connection = new SqlConnection(connectionString))
         {
@@ -69,11 +70,11 @@ public class MateriaService : IMateriaService
             command.Parameters.AddWithValue("@Id", id);
 
             MateriaEntities materia = null;
-            connection.Open();
+            await connection.OpenAsync();
 
-            using (var reader = command.ExecuteReader())
+            using (var reader = await command.ExecuteReaderAsync())
             {
-                if (reader.Read())
+                if (await reader.ReadAsync())
                 {
                     materia = new MateriaEntities
                     {
@@ -83,12 +84,11 @@ public class MateriaService : IMateriaService
                     };
                 }
             }
-
             return materia;
         }
     }
 
-    public void Update(MateriaEntities materia)
+    public async Task<MateriaEntities> Update(MateriaEntities materia)
     {
         using (var connection = new SqlConnection(connectionString))
         {
@@ -97,8 +97,19 @@ public class MateriaService : IMateriaService
             command.Parameters.AddWithValue("@Name", materia.Name);
             command.Parameters.AddWithValue("@State", materia.State);
 
-            connection.Open();
-            command.ExecuteNonQuery();
+            await connection.OpenAsync();
+
+            var response = await command.ExecuteReaderAsync();
+
+            if (response != null)
+            {
+                return materia;
+            }
+            else
+            {
+                return null;
+            }
         }
     }
+
 }
