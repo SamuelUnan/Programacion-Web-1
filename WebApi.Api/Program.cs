@@ -9,6 +9,7 @@ builder.Services.AddControllers();
 builder.Services.AddSingleton<IEstudianteService, EstudianteService>();
 builder.Services.AddScoped<IMaestroService, MaestroService>();
 builder.Services.AddScoped<IMateriaService, MateriaService>();
+builder.Services.AddScoped<IFacturaService, FacturaService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
