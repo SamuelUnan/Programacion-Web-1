@@ -39,6 +39,8 @@ BEGIN
     BEGIN TRY
         BEGIN TRANSACTION;
 
+		Declare @FacturaId INT;
+
         INSERT INTO TblFactura (Factura_Fecha, Factura_Cliente)
         VALUES (@Factura_Fecha, @Factura_Cliente);
 
@@ -55,6 +57,16 @@ BEGIN
         THROW;
     END CATCH
 END;
+
+DECLARE @Detalle TDetalleFactura;
+Insert Into @Detalle(Detalle_Nombre,Detalle_Cantidad, Detalle_Precio)
+values ('Producto A', 2, 17), ('Producto B', 3, 17);
+
+Exec sp_CrearFactura @Factura_Cliente= 'Samuel', @Factura_Fecha = '2024-11-18', @Detalles = @Detalle
+
+SELECT * 
+FROM sys.types 
+WHERE name = 'TDetalleFactura';
 
 Select * From CatMateria
 Select * From TblFactura

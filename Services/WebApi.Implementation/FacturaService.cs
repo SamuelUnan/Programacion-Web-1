@@ -27,8 +27,8 @@ public class FacturaService : IFacturaService
                 {
                     command.CommandType = CommandType.StoredProcedure;
 
-                    command.Parameters.AddWithValue("@Nombre", factura.FacturaCliente);
-                    command.Parameters.AddWithValue("@Descripcion", factura.FacturaFecha);
+                    command.Parameters.AddWithValue("@Factura_Cliente", factura.FacturaCliente);
+                    command.Parameters.AddWithValue("@Factura_Fecha", factura.FacturaFecha);
 
                     DataTable detalleTable = new DataTable();
                     detalleTable.Columns.Add("Detalle_Nombre", typeof(string));
